@@ -1,5 +1,5 @@
 <h1>Countdown for Secret Project</h1>
-<h1>Link will be realised here</h1>
+<h1>Link will be realised in google chat!</h1>
 
 
 <!DOCTYPE html>
@@ -48,27 +48,30 @@
         const minutes = document.getElementById('minutes');
         const seconds = document.getElementById('seconds');
 
-        // Set the target time to 3:30 PM EST
-        const targetTime = new Date();
-        targetTime.setHours(15);
-        targetTime.setMinutes(30);
-        targetTime.setSeconds(0);
+        // Fetch the target time and current time from the server
+        fetch('/time')
+            .then(response => response.json())
+            .then(data => {
+                const targetTime = new Date(data.targetTime);
+                const currentTime = new Date(data.currentTime);
 
-        // Initialize the current time and time remaining variables
-        let currentTime = new Date();
-        let timeRemaining = targetTime - currentTime;
+                let timeRemaining = targetTime - currentTime;
 
-        // Create a function to update the countdown timer every second
-        const updateCountdown = () => {
+                // Update the countdown timer with the remaining time
+                updateCountdown(timeRemaining);
+
+                // Start updating the countdown timer every second
+                const intervalId = setInterval(() => {
+                    timeRemaining -= 1000;
+                    updateCountdown(timeRemaining);
+                }, 1000);
+            });
+
+        const updateCountdown = (timeRemaining) => {
             // Check if the countdown has reached zero
             if (timeRemaining <= 0) {
-                // Clear the interval to stop refreshing the countdown
                 clearInterval(intervalId);
-
-                // Display the message "CHECK AURORA GAMES FOR NEW WEBSITE LINK"
                 document.getElementById('countdown').innerHTML = "CHECK AURORA GAMES FOR NEW WEBSITE LINK";
-
-                // Since the countdown has finished, no further updates are needed
                 return;
             }
 
@@ -81,13 +84,7 @@
             hours.textContent = hoursRemaining;
             minutes.textContent = minutesRemaining < 10 ? '0' + minutesRemaining : minutesRemaining;
             seconds.textContent = secondsRemaining < 10 ? '0' + secondsRemaining : secondsRemaining;
-
-            // Decrement the time remaining by 1 second
-            timeRemaining -= 1000;
         };
-
-        // Start the countdown by calling the updateCountdown function every second
-        const intervalId = setInterval(updateCountdown, 1000);
     </script>
 </body>
 </html>
